@@ -8,4 +8,3 @@ board.PlaceInitialPieces();
 
 BoardRenderer boardRenderer = new BoardRenderer();
 boardRenderer.Render(board);
-

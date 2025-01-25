@@ -1,9 +1,9 @@
 ﻿namespace Chess.Application.Moves;
 
-public abstract class Move(Position startPosition, Position endPosition)
+public abstract class Move(Position start, Position end)
 {
-    protected Position StartPosition { get; set; } = startPosition;
-    protected Position EndPosition { get; set; } = endPosition;
+    protected Position Start { get; set; } = start;
+    protected Position End { get; set; } = end;
     public abstract MoveType Type { get; }
     public abstract void ExecuteMove(Board board);
 }

@@ -6,9 +6,9 @@ public class Queen(Player color) : Piece
 {
     public override Player Color { get; } = color;
 
-    public override IEnumerable<Move> GetMoves(Position startPosition, Board board)
+    public override IEnumerable<Move> GetMoves(Position start, Board board)
     {
-        var availableEndPositions = GetAvailableMovesInDirections(startPosition, board, Direction.All);
-        return availableEndPositions.Select(m => new NormalMove(startPosition, m));
+        var availableEndPositions = GetAvailableMovesInDirections(start, board, Direction.All);
+        return availableEndPositions.Select(m => new NormalMove(start, m));
     }
 }

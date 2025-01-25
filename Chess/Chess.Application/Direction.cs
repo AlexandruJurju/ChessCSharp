@@ -30,6 +30,8 @@ public sealed class Direction(int rowDelta, int colDelta)
     public static Direction SE => S + E;
     public static Direction SW => S + W;
 
+    public static Direction[] Horizontal = [E, W];
+    public static Direction[] Vertical = [N, S];
     public static Direction[] Diagonals = [NE, SE, SW, NW];
     public static Direction[] Cardinals = [N, E, S, W];
     public static Direction[] All = [N, NE, E, SE, S, SW, W, NW];

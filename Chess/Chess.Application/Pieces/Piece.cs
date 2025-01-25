@@ -6,14 +6,13 @@ public abstract class Piece
 {
     public abstract Player Color { get; }
     public bool HasMoved { get; set; } = false;
-    public abstract IEnumerable<Move> GetMoves(Position startPosition, Board board);
+    public abstract IEnumerable<Move> GetMoves(Position start, Board board);
 
     // method will be used to look at the directions that a piece can move to look for the pieces on the board
-    public IEnumerable<Position> GetAvailableMovesInDirections(Position startPosition, Board board, Direction[] directions)
+    protected IEnumerable<Position> GetAvailableMovesInDirections(Position start, Board board, Direction[] directions)
     {
-        return directions.SelectMany(dir => GetAvailableMovesInDirection(startPosition, board, dir));
+        return directions.SelectMany(dir => GetAvailableMovesInDirection(start, board, dir));
     }
-
     private IEnumerable<Position> GetAvailableMovesInDirection(Position piecePosition, Board board, Direction direction)
     {
         // look for all positions in a given direction
@@ -37,5 +36,20 @@ public abstract class Piece
             // Bishop, Rook, Queen cannot jump - don't need to continue checking direction if a friendly piece is encountered
             yield break;
         }
+    }
+    
+    protected bool CanMoveTo(Position position, Board board)
+    {
+        return board.IsPositionInBoard(position) && board.IsPositionEmpty(position);
+    }
+
+    protected bool CanCapture(Position position, Board board)
+    {
+        if (!board.IsPositionInBoard(position) || board.IsPositionEmpty(position))
+        {
+            return false;
+        }
+
+        return board[position]!.Color != Color;
     }
 }
