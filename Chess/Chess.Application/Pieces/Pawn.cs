@@ -12,8 +12,11 @@ public sealed class Pawn : Piece
         {
             _forward = Direction.N;
         }
+        else
+        {
+            _forward = Direction.S;
+        }
 
-        _forward = Direction.S;
     }
 
     public override Player Color { get; }
@@ -26,7 +29,7 @@ public sealed class Pawn : Piece
     // diagonally only if they capture an enemy piece
     public override IEnumerable<Move> GetMoves(Position start, Board board)
     {
-        var forwardMoves = GetForwardMovePositions(start, board);
+        var forwardMoves = GetForwardMovePositions(start, board).ToList();
         var diagonalMoves = GetDiagonalMovePositions(start, board);
 
         return forwardMoves.Concat(diagonalMoves)

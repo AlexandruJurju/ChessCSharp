@@ -22,8 +22,8 @@ public sealed class Direction(int rowDelta, int colDelta)
 
     public static Direction E => new(0, 1);
     public static Direction W => new(0, -1);
-    public static Direction N => new(1, 0);
-    public static Direction S => new(-1, 0);
+    public static Direction N => new(-1, 0);
+    public static Direction S => new(1, 0);
 
     public static Direction NE => N + E;
     public static Direction NW => N + W;

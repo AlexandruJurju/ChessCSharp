@@ -1,10 +1,17 @@
 ﻿using Chess.Application;
 using Chess.CLI;
 
-Console.OutputEncoding = System.Text.Encoding.UTF8; 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-Board board = new Board();
-board.PlaceInitialPieces();
 
-BoardRenderer boardRenderer = new BoardRenderer();
-boardRenderer.Render(board);
+Game game = new Game(new Board(), Player.White);
+game.Board.PlaceInitialPieces();
+
+ConsoleGame consoleGame = new ConsoleGame(game);
+consoleGame.Render();
+
+while (true)
+{
+    consoleGame.ProcessMove();
+    consoleGame.Render();
+}
