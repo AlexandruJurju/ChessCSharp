@@ -3,5 +3,6 @@
 public enum MoveType
 {
     NORMAL,
-    PAWN_PROMOTION
+    PAWN_PROMOTION,
+    CASTLE
 }

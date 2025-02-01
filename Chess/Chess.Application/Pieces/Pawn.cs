@@ -29,40 +29,75 @@ public sealed class Pawn : Piece
     // diagonally only if they capture an enemy piece
     public override IEnumerable<Move> GetMoves(Position start, Board board)
     {
-        var forwardMovePositions = GetForwardMovePositions(start, board).ToList();
-        var diagonalMovePositions = GetDiagonalMovePositions(start, board);
+        var forwardMoves = GetForwardMovePositions(start, board).ToList();
+        var diagonalMoves = GetDiagonalMovePositions(start, board);
 
-        return forwardMovePositions.Concat(diagonalMovePositions)
-            .Select(end => new NormalMove(start, end));
+        return forwardMoves.Concat(diagonalMoves);
     }
 
-    private IEnumerable<Position> GetForwardMovePositions(Position start, Board board)
+    private IEnumerable<Move> GetForwardMovePositions(Position start, Board board)
     {
         Position oneForward = start + _forward;
 
         // check if pawn can move one square forward
         if (CanMoveTo(oneForward, board))
         {
-            yield return oneForward;
+            if (oneForward.Row == 0 || oneForward.Row == 7)
+            {
+                var promotionMoves = new List<Move>()
+                {
+                    new PawnPromotionMove(start, oneForward, PieceTypes.Knight),
+                    new PawnPromotionMove(start, oneForward, PieceTypes.Bishop),
+                    new PawnPromotionMove(start, oneForward, PieceTypes.Rook),
+                    new PawnPromotionMove(start, oneForward, PieceTypes.Queen),
+                };
+
+                foreach (var promotionMove in promotionMoves)
+                {
+                    yield return promotionMove;
+                }
+            }
+            else
+            {
+                yield return new NormalMove(start, oneForward);
+            }
 
             // pawn can move 2 forward only if it hasn't moved && there's no piece there
             Position twoForward = oneForward + _forward;
             if (!HasMoved && CanMoveTo(twoForward, board))
             {
-                yield return twoForward;
+                yield return new NormalMove(start, twoForward);
             }
         }
     }
 
-    private IEnumerable<Position> GetDiagonalMovePositions(Position start, Board board)
+    private IEnumerable<Move> GetDiagonalMovePositions(Position start, Board board)
     {
-        foreach (var direction in new Direction[] { Direction.E, Direction.W })
+        foreach (var direction in new[] { Direction.E, Direction.W })
         {
             Position end = start + _forward + direction;
 
             if (CanCapture(end, board))
             {
-                yield return end;
+                if (end.Row == 0 || end.Row == 7)
+                {
+                    var promotionMoves = new List<Move>()
+                    {
+                        new PawnPromotionMove(start, end, PieceTypes.Knight),
+                        new PawnPromotionMove(start, end, PieceTypes.Bishop),
+                        new PawnPromotionMove(start, end, PieceTypes.Rook),
+                        new PawnPromotionMove(start, end, PieceTypes.Queen),
+                    };
+
+                    foreach (var promotionMove in promotionMoves)
+                    {
+                        yield return promotionMove;
+                    }
+                }
+                else
+                {
+                    yield return new NormalMove(start, end);
+                }
             }
         }
     }
@@ -72,9 +107,9 @@ public sealed class Pawn : Piece
     {
         var diagonalMoves = GetDiagonalMovePositions(start, board);
 
-        return diagonalMoves.Any(end =>
+        return diagonalMoves.Any(move =>
         {
-            Piece? piece = board[end];
+            Piece? piece = board[move.End];
 
             return piece != null && piece.Type == PieceTypes.King;
         });
