@@ -20,12 +20,14 @@ public sealed class Game(
 
         Piece piece = Board[position]!;
 
-        return piece.GetMoves(position, Board);
+        var possibleMoves = piece.GetMoves(position, Board);
+
+        return possibleMoves.Where(move => move.IsLegal(Board));
     }
 
     public void MakeMove(Move move)
     {
-        move.ExecuteMove(Board);
+        move.Execute(Board);
         CurrentPlayer = CurrentPlayer.GetOpponent();
     }
 }

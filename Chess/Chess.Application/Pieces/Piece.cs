@@ -5,7 +5,9 @@ namespace Chess.Application.Pieces;
 public abstract class Piece
 {
     public abstract Player Color { get; }
-    public bool HasMoved { get; set; } = false;
+    public bool HasMoved { get; set; }
+    public abstract PieceTypes Type { get; }
+
     public abstract IEnumerable<Move> GetMoves(Position start, Board board);
 
     // method will be used to look at the directions that a piece can move to look for the pieces on the board
@@ -13,6 +15,7 @@ public abstract class Piece
     {
         return directions.SelectMany(dir => GetAvailableMovesInDirection(start, board, dir));
     }
+
     private IEnumerable<Position> GetAvailableMovesInDirection(Position piecePosition, Board board, Direction direction)
     {
         // look for all positions in a given direction
@@ -37,7 +40,7 @@ public abstract class Piece
             yield break;
         }
     }
-    
+
     protected bool CanMoveTo(Position position, Board board)
     {
         return board.IsPositionInBoard(position) && board.IsPositionEmpty(position);
@@ -52,4 +55,16 @@ public abstract class Piece
 
         return board[position]!.Color != Color;
     }
+
+    public virtual bool CanCaptureOpponentKing(Position start, Board board)
+    {
+        return GetMoves(start, board).Any(move =>
+        {
+            Piece? piece = board[move.End];
+
+            return piece != null && piece.Type == PieceTypes.King;
+        });
+    }
+
+    public abstract Piece DeepCopy();
 }

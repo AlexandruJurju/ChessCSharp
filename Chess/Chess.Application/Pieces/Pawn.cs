@@ -16,12 +16,12 @@ public sealed class Pawn : Piece
         {
             _forward = Direction.S;
         }
-
     }
 
     public override Player Color { get; }
 
     private readonly Direction _forward;
+    public override PieceTypes Type => PieceTypes.Pawn;
 
     // pawns move
     // in the direction of the enemy
@@ -29,10 +29,10 @@ public sealed class Pawn : Piece
     // diagonally only if they capture an enemy piece
     public override IEnumerable<Move> GetMoves(Position start, Board board)
     {
-        var forwardMoves = GetForwardMovePositions(start, board).ToList();
-        var diagonalMoves = GetDiagonalMovePositions(start, board);
+        var forwardMovePositions = GetForwardMovePositions(start, board).ToList();
+        var diagonalMovePositions = GetDiagonalMovePositions(start, board);
 
-        return forwardMoves.Concat(diagonalMoves)
+        return forwardMovePositions.Concat(diagonalMovePositions)
             .Select(end => new NormalMove(start, end));
     }
 
@@ -65,5 +65,27 @@ public sealed class Pawn : Piece
                 yield return end;
             }
         }
+    }
+
+    // override to check just diagonal moves, not forward + diagonal
+    public override bool CanCaptureOpponentKing(Position start, Board board)
+    {
+        var diagonalMoves = GetDiagonalMovePositions(start, board);
+
+        return diagonalMoves.Any(end =>
+        {
+            Piece? piece = board[end];
+
+            return piece != null && piece.Type == PieceTypes.King;
+        });
+    }
+
+    public override Piece DeepCopy()
+    {
+        var copy = new Pawn(Color)
+        {
+            HasMoved = HasMoved
+        };
+        return copy;
     }
 }

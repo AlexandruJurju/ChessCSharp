@@ -6,7 +6,7 @@ public class NormalMove(Position start, Position end) : Move(start, end)
 {
     public override MoveType Type => MoveType.NORMAL;
 
-    public override void ExecuteMove(Board board)
+    public override void Execute(Board board)
     {
         var piece = board[Start];
 

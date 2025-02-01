@@ -5,7 +5,7 @@ namespace Chess.Application;
 public class Board
 {
     private readonly Piece?[,] pieces = new Piece[8, 8];
-    
+
     public bool IsPositionInBoard(Position position)
     {
         return position.Row is >= 0 and < 8 && position.Column is >= 0 and < 8;
@@ -57,5 +57,48 @@ public class Board
     {
         get => pieces[position.Row, position.Column];
         set => pieces[position.Row, position.Column] = value;
+    }
+
+    public IEnumerable<Position> GetAllPiecesPositions()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                Position position = new Position(row, col);
+                if (!IsPositionEmpty(position))
+                {
+                    yield return position;
+                }
+            }
+        }
+    }
+
+    public IEnumerable<Position> GetAllPiecePositionsForPlayer(Player player)
+    {
+        return GetAllPiecesPositions()
+            .Where(position => this[position]?.Color == player);
+    }
+
+    public bool IsInCheck(Player player)
+    {
+        return GetAllPiecePositionsForPlayer(player.GetOpponent())
+            .Any(position =>
+            {
+                Piece? piece = this[position];
+                return piece != null && piece.CanCaptureOpponentKing(position, this);
+            });
+    }
+
+    public Board DeepCopy()
+    {
+        Board copy = new Board();
+
+        foreach (var position in GetAllPiecesPositions())
+        {
+            copy[position] = this[position]!.DeepCopy();
+        }
+
+        return copy;
     }
 }
